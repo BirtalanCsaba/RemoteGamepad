@@ -48,17 +48,17 @@ def handle_button_command(command: ButtonInput):
 def handle_axis_command(command: AxisInputValue):
 
     if command.AxisInput.Name == AxisTypes.LSB_LEFT_RIGHT.Name:
-        gamepad.left_joystick_float(command.Value, 0.0)
+        gamepad.left_joystick_float(command.XValue, command.YValue)
     elif command.AxisInput.Name == AxisTypes.LSB_TOP_DOWN.Name:
-        gamepad.left_joystick_float(0.0, command.Value)
+        gamepad.left_joystick_float(command.XValue, command.YValue)
     elif command.AxisInput.Name == AxisTypes.RSB_LEFT_RIGHT.Name:
-        gamepad.right_joystick_float(command.Value, 0.0)
+        gamepad.right_joystick_float(command.XValue, command.YValue)
     elif command.AxisInput.Name == AxisTypes.RSB_TOP_DOWN.Name:
-        gamepad.right_joystick_float(0.0, command.Value)
+        gamepad.right_joystick_float(command.XValue, command.YValue)
     elif command.AxisInput.Name == AxisTypes.LEFT_TRIGGER.Name:
-        gamepad.left_trigger_float(command.Value)
+        gamepad.left_trigger_float(command.XValue)
     elif command.AxisInput.Name == AxisTypes.RIGHT_TRIGGER.Name:
-        gamepad.right_trigger_float(command.Value)
+        gamepad.right_trigger_float(command.YValue)
     gamepad.update()
 
 
