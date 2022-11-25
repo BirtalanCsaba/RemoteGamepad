@@ -17,6 +17,7 @@ gamepad = vg.VX360Gamepad()
 
 
 def handle_button_command(command: ButtonInput):
+
     if command.Name == ButtonTypes.A.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
     elif command.Name == ButtonTypes.B.Name:
@@ -46,15 +47,14 @@ def handle_button_command(command: ButtonInput):
 
 
 def handle_axis_command(command: AxisInputValue):
-
     if command.AxisInput.Name == AxisTypes.LSB_LEFT_RIGHT.Name:
-        gamepad.left_joystick_float(command.XValue, command.YValue)
+        gamepad.left_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.LSB_TOP_DOWN.Name:
-        gamepad.left_joystick_float(command.XValue, command.YValue)
+        gamepad.left_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.RSB_LEFT_RIGHT.Name:
-        gamepad.right_joystick_float(command.XValue, command.YValue)
+        gamepad.right_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.RSB_TOP_DOWN.Name:
-        gamepad.right_joystick_float(command.XValue, command.YValue)
+        gamepad.right_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.LEFT_TRIGGER.Name:
         gamepad.left_trigger_float(command.XValue)
     elif command.AxisInput.Name == AxisTypes.RIGHT_TRIGGER.Name:
@@ -106,6 +106,8 @@ if __name__ == '__main__':
     server_socket.listen()
     conn, addr = server_socket.accept()
 
+    remaining_buffer = ""
+
     with conn:
         print(f"Connected by {addr}")
         while True:
@@ -113,12 +115,20 @@ if __name__ == '__main__':
             bytes_message = buffer.get_line()
             if bytes_message is None:
                 continue
-            print(bytes_message)
+            # print(bytes_message)
+            if remaining_buffer != "":
+                print()
+                print(remaining_buffer)
+                print()
+                remaining_buffer += bytes_message
+                bytes_message = str(remaining_buffer)
+                remaining_buffer = ""
 
             try:
                 message = json.loads(bytes_message)
                 print(message)
             except Exception:
+                remaining_buffer += bytes_message
                 continue
 
             if message["input_type"] == "button":

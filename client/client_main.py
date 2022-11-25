@@ -62,6 +62,9 @@ def handle_controller_input():
                         x_value = 0.0
                     if last_left_trigger_value == 0.0 and x_value == 0.0:
                         continue
+                    if x_value == 0.0:
+                        axis_value = AxisInputValue(axis_type, x_value, y_value)
+                        send_input(axis_value)
                     last_left_trigger_value = x_value
                 else:
                     x_value = 0.0
@@ -70,6 +73,9 @@ def handle_controller_input():
                         y_value = 0.0
                     if last_right_trigger_value == 0.0 and y_value == 0.0:
                         continue
+                    if y_value == 0.0:
+                        axis_value = AxisInputValue(axis_type, x_value, y_value)
+                        send_input(axis_value)
                     last_right_trigger_value = y_value
                 if abs(x_value) < 0.1:
                     x_value = 0.0
@@ -101,7 +107,7 @@ def send_input(controller_input: ControllerInput):
     if controller_input is None:
         return
     json_str = controller_input.to_json()
-    client_socket.sendall(json_str.encode('utf-8') + SEPARATOR.encode('utf-8'))
+    client_socket.sendall(json_str.encode('utf-8') + SEPARATOR.encode())
 
 
 if __name__ == '__main__':
