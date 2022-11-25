@@ -30,6 +30,15 @@ def handle_button_command(command: ButtonInput):
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
     elif command.Name == ButtonTypes.RIGHT_BUTTON.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
+    elif command.Name == ButtonTypes.MENU.Name:
+        gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_BACK)
+    elif command.Name == ButtonTypes.START.Name:
+        gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_START)
+    elif command.Name == ButtonTypes.L3.Name:
+        gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB)
+    elif command.Name == ButtonTypes.R3.Name:
+        gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
+
     elif command.Name == ButtonTypes.RELEASE_A.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
     elif command.Name == ButtonTypes.RELEASE_B.Name:
@@ -42,6 +51,15 @@ def handle_button_command(command: ButtonInput):
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
     elif command.Name == ButtonTypes.RELEASE_RIGHT_BUTTON.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
+    elif command.Name == ButtonTypes.RELEASE_MENU.Name:
+        gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_BACK)
+    elif command.Name == ButtonTypes.RELEASE_START.Name:
+        gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_START)
+    elif command.Name == ButtonTypes.RELEASE_L3.Name:
+        gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_THUMB)
+    elif command.Name == ButtonTypes.RELEASE_R3.Name:
+        gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
+
     gamepad.update()
 
 
