@@ -52,13 +52,13 @@ def handle_controller_input():
                 if axis_type == AxisTypes.LSB_LEFT_RIGHT or axis_type == AxisTypes.LSB_TOP_DOWN:
                     x_value = joysticks[-1].get_axis(0)
                     y_value = joysticks[-1].get_axis(1)
-                elif axis_type == AxisTypes.RSB_TOP_DOWN or axis_type == AxisTypes.RSB_TOP_DOWN:
+                elif axis_type == AxisTypes.RSB_LEFT_RIGHT or axis_type == AxisTypes.RSB_TOP_DOWN:
                     x_value = joysticks[-1].get_axis(2)
                     y_value = joysticks[-1].get_axis(3)
                 elif axis_type == AxisTypes.LEFT_TRIGGER:
                     x_value = joysticks[-1].get_axis(4)
                     y_value = 0.0
-                    if x_value < -0.2:
+                    if x_value < -0.1:
                         x_value = 0.0
                     if last_left_trigger_value == 0.0 and x_value == 0.0:
                         continue
@@ -66,10 +66,10 @@ def handle_controller_input():
                         axis_value = AxisInputValue(axis_type, x_value, y_value)
                         send_input(axis_value)
                     last_left_trigger_value = x_value
-                else:
+                elif axis_type == AxisTypes.RIGHT_TRIGGER:
                     x_value = 0.0
                     y_value = joysticks[-1].get_axis(5)
-                    if y_value < -0.2:
+                    if y_value < -0.1:
                         y_value = 0.0
                     if last_right_trigger_value == 0.0 and y_value == 0.0:
                         continue
@@ -77,13 +77,18 @@ def handle_controller_input():
                         axis_value = AxisInputValue(axis_type, x_value, y_value)
                         send_input(axis_value)
                     last_right_trigger_value = y_value
-                if abs(x_value) < 0.1:
+                else:
+                    continue
+
+                if abs(x_value) < 0.05:
                     x_value = 0.0
-                if abs(y_value) < 0.1:
+                if abs(y_value) < 0.05:
                     y_value = 0.0
+
                 axis_value = AxisInputValue(axis_type, x_value, y_value)
 
                 send_input(axis_value)
+
                 # print(axis_value)
             elif event.type == JOYHATMOTION:
                 # print(event)
