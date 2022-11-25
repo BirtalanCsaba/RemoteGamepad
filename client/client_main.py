@@ -13,7 +13,7 @@ from common.models.dpad_input import DpadInput
 
 joysticks = []
 clock = pygame.time.Clock()
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 keepPlaying = True
 addr = ("127.0.0.1", PORT)
 
@@ -26,7 +26,7 @@ SEPARATOR = "\r\n"
 
 def init_server_connection():
     global client_socket
-    client_socket.connect(addr)
+    # client_socket.connect(addr)
 
 
 def init_controller_detection():
@@ -107,7 +107,7 @@ def send_input(controller_input: ControllerInput):
     if controller_input is None:
         return
     json_str = controller_input.to_json()
-    client_socket.sendall(json_str.encode('utf-8') + SEPARATOR.encode())
+    client_socket.sendto(json_str.encode('utf-8'), addr)
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ gamepad = vg.VX360Gamepad()
 
 
 def handle_button_command(command: ButtonInput):
+    global gamepad
 
     if command.Name == ButtonTypes.A.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
@@ -30,23 +31,24 @@ def handle_button_command(command: ButtonInput):
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
     elif command.Name == ButtonTypes.RELEASE_RIGHT_BUTTON.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
-    elif command.Name == ButtonTypes.A.Name:
+    elif command.Name == ButtonTypes.RELEASE_A.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
-    elif command.Name == ButtonTypes.B.Name:
+    elif command.Name == ButtonTypes.RELEASE_B.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_B)
-    elif command.Name == ButtonTypes.X.Name:
+    elif command.Name == ButtonTypes.RELEASE_X.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_X)
-    elif command.Name == ButtonTypes.Y.Name:
+    elif command.Name == ButtonTypes.RELEASE_Y.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_Y)
     elif command.Name == ButtonTypes.RELEASE_LEFT_BUTTON.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
     elif command.Name == ButtonTypes.RELEASE_RIGHT_BUTTON.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
-
     gamepad.update()
 
 
 def handle_axis_command(command: AxisInputValue):
+    global gamepad
+
     if command.AxisInput.Name == AxisTypes.LSB_LEFT_RIGHT.Name:
         gamepad.left_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.LSB_TOP_DOWN.Name:
@@ -63,6 +65,8 @@ def handle_axis_command(command: AxisInputValue):
 
 
 def handle_dpad_command(command: DpadInput):
+    global gamepad
+
     if command.Name == DpadTypes.TOP.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
     elif command.Name == DpadTypes.DOWN.Name:
@@ -101,45 +105,45 @@ class Buffer:
 
 
 if __name__ == '__main__':
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind(('', PORT))
-    server_socket.listen()
-    conn, addr = server_socket.accept()
+    # server_socket.listen()
+    # conn, addr = server_socket.accept()
 
     remaining_buffer = ""
 
-    with conn:
-        print(f"Connected by {addr}")
-        while True:
-            buffer = Buffer(conn)
-            bytes_message = buffer.get_line()
-            if bytes_message is None:
-                continue
-            # print(bytes_message)
-            if remaining_buffer != "":
-                print()
-                print(remaining_buffer)
-                print()
-                remaining_buffer += bytes_message
-                bytes_message = str(remaining_buffer)
-                remaining_buffer = ""
+    # with conn:
+    while True:
+        # # buffer = Buffer(conn)
+        # bytes_message = buffer.get_line()
+        # if bytes_message is None:
+        #     continue
+        # # print(bytes_message)
+        # if remaining_buffer != "":
+        #     print()
+        #     print(remaining_buffer)
+        #     print()
+        #     remaining_buffer += bytes_message
+        #     bytes_message = str(remaining_buffer)
+        #     remaining_buffer = ""
+        bytes_message, addr = server_socket.recvfrom(1024)
 
-            try:
-                message = json.loads(bytes_message)
-                print(message)
-            except Exception:
-                remaining_buffer += bytes_message
-                continue
+        try:
+            message = json.loads(bytes_message.decode('utf-8'))
+            print(message)
+        except Exception:
+            remaining_buffer += bytes_message
+            continue
 
-            if message["input_type"] == "button":
-                button_command = ButtonInput.from_json(message)
-                handle_button_command(button_command)
-                # print("button")
-            elif message["input_type"] == "axis":
-                axis_command = AxisInputValue.from_json(message)
-                handle_axis_command(axis_command)
-                # print("axis")
-            elif message["input_type"] == "dpad":
-                dpad_command = DpadInput.from_json(message)
-                handle_dpad_command(dpad_command)
-                # print("dpad")
+        if message["input_type"] == "button":
+            button_command = ButtonInput.from_json(message)
+            handle_button_command(button_command)
+            # print("button")
+        elif message["input_type"] == "axis":
+            axis_command = AxisInputValue.from_json(message)
+            handle_axis_command(axis_command)
+            # print("axis")
+        elif message["input_type"] == "dpad":
+            dpad_command = DpadInput.from_json(message)
+            handle_dpad_command(dpad_command)
+            # print("dpad")
