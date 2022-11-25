@@ -18,7 +18,6 @@ gamepad = vg.VX360Gamepad()
 
 def handle_button_command(command: ButtonInput):
     global gamepad
-
     if command.Name == ButtonTypes.A.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
     elif command.Name == ButtonTypes.B.Name:
@@ -27,9 +26,9 @@ def handle_button_command(command: ButtonInput):
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_X)
     elif command.Name == ButtonTypes.Y.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_Y)
-    elif command.Name == ButtonTypes.RELEASE_LEFT_BUTTON.Name:
+    elif command.Name == ButtonTypes.LEFT_BUTTON.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER)
-    elif command.Name == ButtonTypes.RELEASE_RIGHT_BUTTON.Name:
+    elif command.Name == ButtonTypes.RIGHT_BUTTON.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
     elif command.Name == ButtonTypes.RELEASE_A.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_A)
@@ -48,7 +47,6 @@ def handle_button_command(command: ButtonInput):
 
 def handle_axis_command(command: AxisInputValue):
     global gamepad
-
     if command.AxisInput.Name == AxisTypes.LSB_LEFT_RIGHT.Name:
         gamepad.left_joystick_float(command.XValue, -command.YValue)
     elif command.AxisInput.Name == AxisTypes.LSB_TOP_DOWN.Name:
@@ -66,7 +64,6 @@ def handle_axis_command(command: AxisInputValue):
 
 def handle_dpad_command(command: DpadInput):
     global gamepad
-
     if command.Name == DpadTypes.TOP.Name:
         gamepad.press_button(XUSB_BUTTON.XUSB_GAMEPAD_DPAD_UP)
     elif command.Name == DpadTypes.DOWN.Name:
@@ -83,7 +80,6 @@ def handle_dpad_command(command: DpadInput):
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_DPAD_LEFT)
     elif command.Name == DpadTypes.RELEASE_RIGHT.Name:
         gamepad.release_button(XUSB_BUTTON.XUSB_GAMEPAD_DPAD_RIGHT)
-
     gamepad.update()
 
 
