@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
         try:
             message = json.loads(bytes_message.decode('utf-8'))
-            print(message)
+            # print(message)
         except Exception:
             remaining_buffer += bytes_message
             continue

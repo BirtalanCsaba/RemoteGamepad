@@ -84,7 +84,7 @@ def handle_controller_input():
                 axis_value = AxisInputValue(axis_type, x_value, y_value)
 
                 send_input(axis_value)
-                print(axis_value)
+                # print(axis_value)
             elif event.type == JOYHATMOTION:
                 # print(event)
                 if is_controller_release_dpad_type(event.value) and last_dpad_type is not None:
