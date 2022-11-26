@@ -1,4 +1,5 @@
 import json
+import select
 
 import vgamepad as vg
 import socket
@@ -12,6 +13,7 @@ from common.models.button_input import ButtonInput
 from common.models.button_types import ButtonTypes
 from common.models.dpad_input import DpadInput
 from common.models.dpad_types import DpadTypes
+from server.server_ui import ServerUi
 
 gamepad = vg.VX360Gamepad()
 
@@ -119,45 +121,47 @@ class Buffer:
 
 
 if __name__ == '__main__':
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_socket.bind(('', PORT))
-    # server_socket.listen()
-    # conn, addr = server_socket.accept()
-
-    remaining_buffer = ""
-
-    # with conn:
-    while True:
-        # # buffer = Buffer(conn)
-        # bytes_message = buffer.get_line()
-        # if bytes_message is None:
-        #     continue
-        # # print(bytes_message)
-        # if remaining_buffer != "":
-        #     print()
-        #     print(remaining_buffer)
-        #     print()
-        #     remaining_buffer += bytes_message
-        #     bytes_message = str(remaining_buffer)
-        #     remaining_buffer = ""
-        bytes_message, addr = server_socket.recvfrom(1024)
-
-        try:
-            message = json.loads(bytes_message.decode('utf-8'))
-            # print(message)
-        except Exception:
-            remaining_buffer += bytes_message
-            continue
-
-        if message["input_type"] == "button":
-            button_command = ButtonInput.from_json(message)
-            handle_button_command(button_command)
-            # print("button")
-        elif message["input_type"] == "axis":
-            axis_command = AxisInputValue.from_json(message)
-            handle_axis_command(axis_command)
-            # print("axis")
-        elif message["input_type"] == "dpad":
-            dpad_command = DpadInput.from_json(message)
-            handle_dpad_command(dpad_command)
-            # print("dpad")
+    serverUi = ServerUi()
+    serverUi.application_startup()
+    # server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # server_socket.bind(('', PORT))
+    # # server_socket.listen()
+    # # conn, addr = server_socket.accept()
+    #
+    # remaining_buffer = ""
+    #
+    # # with conn:
+    # while True:
+    #     # # buffer = Buffer(conn)
+    #     # bytes_message = buffer.get_line()
+    #     # if bytes_message is None:
+    #     #     continue
+    #     # # print(bytes_message)
+    #     # if remaining_buffer != "":
+    #     #     print()
+    #     #     print(remaining_buffer)
+    #     #     print()
+    #     #     remaining_buffer += bytes_message
+    #     #     bytes_message = str(remaining_buffer)
+    #     #     remaining_buffer = ""
+    #     bytes_message, addr = server_socket.recvfrom(1024)
+    #
+    #     try:
+    #         message = json.loads(bytes_message.decode('utf-8'))
+    #         # print(message)
+    #     except Exception:
+    #         remaining_buffer += bytes_message
+    #         continue
+    #
+    #     if message["input_type"] == "button":
+    #         button_command = ButtonInput.from_json(message)
+    #         handle_button_command(button_command)
+    #         # print("button")
+    #     elif message["input_type"] == "axis":
+    #         axis_command = AxisInputValue.from_json(message)
+    #         handle_axis_command(axis_command)
+    #         # print("axis")
+    #     elif message["input_type"] == "dpad":
+    #         dpad_command = DpadInput.from_json(message)
+    #         handle_dpad_command(dpad_command)
+    #         # print("dpad")
