@@ -1,4 +1,4 @@
-from server.socket_controller import SocketController
+from client.client_controller import ClientController
 
 
 class Command:
@@ -23,15 +23,16 @@ class Command:
         self.__command_function = value
 
 
-class ServerUi:
+class ClientUi:
     def __init__(self):
-        self.__max_players = 1
+        self.__name = "Remote player"
         self.__port = 12000
+        self.__server_address = "127.0.0.1"
         self.__command_list = {
             "0": Command("Exit", self.__application_exit),
             "1": Command("Settings", self.__settings),
             "2": Command("Show settings", self.__show_settings),
-            "3": Command("Start server", self.__start_server),
+            "3": Command("Connect", self.__connect),
         }
 
     def application_startup(self):
@@ -54,11 +55,13 @@ class ServerUi:
 
     def __settings(self):
         try:
-            max_players = int(input("Maximum number of players (from 1 to 3): "))
-            if 1 < max_players > 3:
-                print("Invalid number of players")
-                return
-            self.__max_players = max_players
+            name = input("name: ")
+            if len(name) > 40:
+                print("Cannot set name. Reason: too long.")
+            else:
+                self.__name = name
+
+            self.__server_address = input("server address: ")
 
             port = int(input("Server port: "))
             if 1 < port > 65535:
@@ -69,10 +72,9 @@ class ServerUi:
             print("Invalid input")
 
     def __show_settings(self):
-        print(f"Maximum number of players allowed to join: {self.__max_players}")
-        print(f"Server port: {self.__port}")
+        print(f"Name: {self.__name}")
+        print(f"Connection port: {self.__port}")
 
-    def __start_server(self):
-        socket_controller = SocketController(self.__max_players, self.__port)
-        socket_controller.start_listen()
-
+    def __connect(self):
+        client_controller = ClientController(self.__port, self.__server_address, self.__name)
+        client_controller.start_connection()

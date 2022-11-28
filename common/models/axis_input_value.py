@@ -1,7 +1,7 @@
 import json
 
 from common.models.axis_input import AxisInput
-from common.models.controllerinput import ControllerInput
+from common.models.controller_input import ControllerInput
 
 
 class AxisInputValue(ControllerInput):
