@@ -39,3 +39,6 @@ class RemoteClient:
     @Gamepad.setter
     def Gamepad(self, value):
         self.__gamepad = value
+
+    def __str__(self):
+        return f"RemoteClient(address: {self.__address}, name: {self.__name}, isConnected: {self.__is_connected})"

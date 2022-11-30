@@ -22,7 +22,7 @@ class SocketController:
         self.__max_players = max_players
         self.__port = port
         self.__finished = False
-        self.__number_of_connected_client = 0
+        self.__number_of_connected_clients = 0
         self.__socket_inputs = {}
         self.__thread_pool = ThreadPoolExecutor(max_workers=10)
         self.__console_mutex = Lock()
@@ -117,6 +117,8 @@ class SocketController:
         client_sock.setblocking(False)
         if client_addr in self.__socket_inputs:
             return
+        if self.__number_of_connected_clients >= self.__max_players:
+            self.__shutdown_connection_with_socket(client_sock, f"Maximum number of players reached")
         self.__print(f"Player with address: {client_addr} is trying to connect.")
         self.__socket_inputs[client_sock] = RemoteClient(client_addr, None)
 
@@ -124,6 +126,8 @@ class SocketController:
 
         if not self.__socket_inputs[client_sock].IsConnected:
             self.__shutdown_connection_with_socket(client_sock, f"Player with address {client_addr} timeout.")
+            return
+        self.__number_of_connected_clients += 1
 
     def __handle_udp(self, server_udp_socket):
         try:
@@ -134,8 +138,12 @@ class SocketController:
         self.__thread_pool.submit(self.__do_controller_command, data, addr)
 
     def __do_controller_command(self, data, address):
+        c = 0
         for remote_client in self.__socket_inputs.values():
-            if remote_client.address == address:
+            c += 1
+            if remote_client.Address is None:
+                continue
+            if remote_client.Address[0] == address[0] and remote_client.IsConnected:
                 try:
                     message = json.loads(data.decode('utf-8'))
                     # print(message)
@@ -239,6 +247,7 @@ class SocketController:
         client_socket.close()
         if remove_socket:
             del self.__socket_inputs[client_socket]
+            self.__number_of_connected_clients -= 1
 
     def __shutdown_connection_with_socket(self, client_socket, log_message="", remove_socket=True):
         if log_message != "":
@@ -246,3 +255,4 @@ class SocketController:
         client_socket.shutdown(socket.SHUT_RDWR)
         if remove_socket:
             del self.__socket_inputs[client_socket]
+            self.__number_of_connected_clients -= 1

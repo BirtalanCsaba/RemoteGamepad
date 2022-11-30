@@ -20,7 +20,7 @@ class ClientController:
     __clock = pygame.time.Clock()
     __client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    __last_dpad_type: DpadInput
+    __last_dpad_type: DpadInput | None = None
     __last_left_trigger_value = 0.0
     __last_right_trigger_value = 0.0
 
@@ -108,7 +108,7 @@ class ClientController:
                         if x_value == 0.0:
                             axis_value = AxisInputValue(axis_type, x_value, y_value)
                             self.__send_input(axis_value)
-                        last_left_trigger_value = x_value
+                        self.__last_left_trigger_value = x_value
                     elif axis_type == AxisTypes.RIGHT_TRIGGER:
                         x_value = 0.0
                         y_value = self.__joysticks[-1].get_axis(5)
@@ -119,7 +119,7 @@ class ClientController:
                         if y_value == 0.0:
                             axis_value = AxisInputValue(axis_type, x_value, y_value)
                             self.__send_input(axis_value)
-                        last_right_trigger_value = y_value
+                        self.__last_right_trigger_value = y_value
                     else:
                         continue
 
@@ -139,7 +139,7 @@ class ClientController:
                         dpad_type = get_controller_dpad_release_by_dpad_input(self.__last_dpad_type)
                     else:
                         dpad_type = get_controller_dpad_type(event.value)
-                        last_dpad_type = dpad_type
+                        self.__last_dpad_type = dpad_type
 
                     self.__send_input(dpad_type)
                     # print(dpad_type)
@@ -153,6 +153,7 @@ class ClientController:
         if controller_input is None:
             return
         json_str = controller_input.to_json()
+        print(json_str)
         self.__server_udp_socket.sendto(json_str.encode('utf-8'), (self.__server_address, self.__port))
 
     def __handle_server_response(self, sock):
